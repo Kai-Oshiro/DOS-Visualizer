@@ -7,24 +7,13 @@ class ConfigProcessor:
         self.config_ini.read(conf_file)
 
     # Read "JOB_DIR" section
-    def read_job_dir(self):
-        try:
-            job_dir = self.config_ini["JOB_DIR"]
-            dir_dict = dict(job_dir)
-        except:
-            print(f"\"JOB_DIR\" section does not exist.\n")
-        return dir_dict
+    def read_config(self):
+        section_list = self.config_ini.sections()
 
-    # Read "ATOM_IDX" section
-    def read_atom_idx(self):
-        try:
-            atom_idx = self.config_ini["ATOM_IDX"]
-            idx_dict = dict(atom_idx)
-        except:
-            print(f"\"ATOM_IDX\" section does not exist.\n")
-        return idx_dict
+        all_conf_list = []
+        for section in section_list:
+            configs = self.config_ini[section]
+            conf_dict = dict(configs)
+            all_conf_list.append(conf_dict)
 
-#    def read_params(self):
-#        atom_idx = self.config_ini["PARAMS"]["atom_idx"]
-#        return atom_idx
-
+        return all_conf_list
