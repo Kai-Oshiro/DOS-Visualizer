@@ -1,3 +1,4 @@
+import sys
 import configparser
 
 class ConfigProcessor:
@@ -5,6 +6,18 @@ class ConfigProcessor:
         self.config_ini = configparser.ConfigParser()
         self.config_ini.optionxform = str
         self.config_ini.read(conf_file)
+
+    def check_param(self, key=None, conf_dict=None):
+        if conf_dict[key] == None:
+            print("Each section should have \"conf_dict[key]\" parameter.\n")
+            sys.exit()
+
+    def compare_key_len(self, key1="atoms", key2=None, conf_dict=None):
+        if conf_dict[key2] != None:
+            if len(conf_dict[key1].split(",")) != len(conf_dict[key2].split(",")):
+                section_name = conf_dict["section"]
+                print(f"Length of \"{key1}\" and \"{key2}\" in [\"{section_name}\"]  dosen't match.\n")
+                sys.exit()
 
     # Read "JOB_DIR" section
     def read_config(self):
@@ -14,6 +27,40 @@ class ConfigProcessor:
         for section in section_list:
             configs = self.config_ini[section]
             conf_dict = dict(configs)
+            conf_dict["section"] = section
+
+            # List of items that can be set in .ini
+            keys_to_check = ["job", "name", "atoms", "orbitals", "colors", "lines"]
+
+            # If key does not exist in .ini, set "None".
+            for key in keys_to_check:
+                if key not in conf_dict:
+                    conf_dict[key] = None
+
+            # Check params
+            self.check_param(key="atoms", conf_dict=conf_dict)
+            self.check_param(key="orbitals", conf_dict=conf_dict)
+
+            self.compare_key_len(key2="orbitals", conf_dict=conf_dict)
+            self.compare_key_len(key2="colors", conf_dict=conf_dict)
+            self.compare_key_len(key2="lines", conf_dict=conf_dict)
+
+            # Update "atoms" parameter
+            # atoms_group_list = [[Indexes of atoms in group 1], [that in group 2], ...]
+            atoms_group_list = []
+            for atoms_group in conf_dict["atoms"].split(","):
+                atoms_list = []
+                for atoms in atoms_group.split():
+                    if "-" in atoms:
+                        # Split numbers joined by "-" and convert it from str to int
+                        start, end = map(int, atoms.split("-"))
+                        atoms_list.extend(list(range(start, end+1)))
+                    else:
+                        atoms_list.append(int(atoms))
+
+                atoms_group_list.append(atoms_list)
+            conf_dict["atoms"] = atoms_group_list
+
             all_conf_list.append(conf_dict)
 
         return all_conf_list
