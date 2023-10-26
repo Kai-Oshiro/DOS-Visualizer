@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 import os
-import sys
 import pandas as pd
-import subprocess
-from my_module import argument, config
+from my_module import argument, config, file
 
 # Get arguments
 args = argument.get_args()
@@ -22,34 +20,41 @@ conf_proc = config.ConfigProcessor(conf_file)
 all_conf_list = conf_proc.read_config()
 
 for conf_dict in all_conf_list:
-    #print(conf_dict[])
+    #print(conf_dict)
     for k, v in conf_dict.items():
         print(f"{k}: {v}")
     print()
 
-    job_path = conf_dict["job"]
+
     cwd = os.getcwd()
+    job_path = conf_dict["job"]
+    os.chdir(job_path) # Move to job directory
 
-    for atoms_group in conf_dict["atoms"]:
-        # Move to job directory
-        os.chdir(job_path)
+    pdos_list = []
+    for atoms_group, orbitals_group in zip(conf_dict["atoms"], conf_dict["orbitals"]):
 
-        for atom in atoms_group:
+
+        first_itr = True
+        for atoms in atoms_group:
             #print(atom)
+            if first_itr:
+                read_file = file.ReadFile(atoms=atoms_group[0], orbitals_group=orbitals_group)
+                len_data = read_file.get_len()
+                s_pdos = pd.Series([0] * len_data) # Define a "pd.Series" with 0 for each value
+                first_itr = False
 
-            file_path = f"./dos_dat/PDOS_A{atom}_UP.dat"
-            df_up = pd.read_csv(file_path, sep="\s+")
+            read_file = file.ReadFile(atoms=atoms, orbitals_group=orbitals_group)
+            df_sum = read_file.get_df()
+            s_pdos += df_sum
 
-            file_path = f"./dos_dat/PDOS_A{atom}_DW.dat"
-            df_dw = pd.read_csv(file_path, sep="\s+")
-            df_dw = df_dw.sort_values(by="#Energy", ascending=False)
+        pdos_list.append(s_pdos)
 
-            df_both = pd.concat([df_up, df_dw], axis=0)
-            df_both = df_both.reset_index(drop=True)
-            #print(df_both)
+    #figure.MakeFig(pdos_)
 
-        #print()
-        os.chdir(cwd)
+    print(len(pdos_list))
+
+    #print()
+    os.chdir(cwd)
 
 
 
