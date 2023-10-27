@@ -5,7 +5,7 @@ class ReadFile:
         self.atoms = atoms
         self.orbitals_group = orbitals_group
 
-    def get_df(self):
+    def get_ene(self):
         file_path = f"./dos_dat/PDOS_A{self.atoms}_UP.dat"
         df_up = pd.read_csv(file_path, sep="\s+")
 
@@ -16,16 +16,25 @@ class ReadFile:
         df_both = pd.concat([df_up, df_dw], axis=0)
         df_both = df_both.reset_index(drop=True)
 
-        df_sum = df_both[self.orbitals_group].sum(axis=1)
-        #name = "_".join(self.orbitals_group)
-        #df_sum.name = name
+        s_atom_ene = df_both["#Energy"]
 
-        #print(df_both)
-        #print(df_sum.name)
-        #print(df_sum)
+        return s_atom_ene
 
-        return df_sum
+    def get_dos(self):
+        file_path = f"./dos_dat/PDOS_A{self.atoms}_UP.dat"
+        df_up = pd.read_csv(file_path, sep="\s+")
+
+        file_path = f"./dos_dat/PDOS_A{self.atoms}_DW.dat"
+        df_dw = pd.read_csv(file_path, sep="\s+")
+        df_dw = df_dw.sort_values(by="#Energy", ascending=False)
+
+        df_both = pd.concat([df_up, df_dw], axis=0)
+        df_both = df_both.reset_index(drop=True)
+
+        s_atom_dos = df_both[self.orbitals_group].sum(axis=1)
+
+        return s_atom_dos
 
     def get_len(self):
-        df_sum = self.get_df()
-        return len(df_sum)
+        s_atom_ene = self.get_ene()
+        return len(s_atom_ene)

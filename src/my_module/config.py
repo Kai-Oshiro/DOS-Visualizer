@@ -20,6 +20,10 @@ class ConfigProcessor:
                 print(f"Length of \"{key1}\" and \"{key2}\" in [\"{section_name}\"]  dosen't match.\n")
                 sys.exit()
 
+    def check_len(self, key=None, conf_dict=None, nlen=None):
+        if len(conf_dict[key].split(",")) != nlen:
+            print(f"Length of \"{key}\" isn't {nlen}.")
+
     # Read "JOB_DIR" section
     def read_config(self):
         section_list = self.config_ini.sections()
@@ -31,10 +35,12 @@ class ConfigProcessor:
             conf_dict["section"] = section
 
             # List of items that can be set in .ini
-            keys_to_check = ["job", "name", "atoms", "orbitals", "colors", "lines"]
+            keys_list = ["section", "job", "atoms", "orbitals",
+                        "lablels", "colors", "lines", "figname",
+                        "fontsize", "dpi", "x_lim", "y_lim", "grid"]
 
             # If key does not exist in .ini, set "None".
-            for key in keys_to_check:
+            for key in keys_list:
                 if key not in conf_dict:
                     conf_dict[key] = None
 
@@ -45,6 +51,11 @@ class ConfigProcessor:
             self.compare_key_len(key2="orbitals", conf_dict=conf_dict)
             self.compare_key_len(key2="colors", conf_dict=conf_dict)
             self.compare_key_len(key2="lines", conf_dict=conf_dict)
+
+            if conf_dict["x_lim"] != None:
+                self.check_len(key="x_lim", conf_dict=conf_dict, nlen=2)
+            if conf_dict["y_lim"] != None:
+                self.check_len(key="y_lim", conf_dict=conf_dict, nlen=2)
 
             # Update "atoms" parameter
             # conf_dict["atoms"] = "1 2 3, 1-3, ... 1 2 3-5"
@@ -90,6 +101,23 @@ class ConfigProcessor:
                 lines_list = [l.replace(" ", "") for l in lines_list]
                 conf_dict["lines"] = lines_list
 
-            all_conf_list.append(conf_dict)
+            # Update "x_lim" parameter
+            # conf_dict["x_lim"] = "lower limit, upper limit"
+            # conf_dict["x_lim"] = ['lower limit', 'upper limit']
+            if conf_dict["x_lim"] != None:
+                x_lim_list = conf_dict["x_lim"].split(",")
+                x_lim_list = [x.replace(" ", "") for x in x_lim_list]
+                conf_dict["x_lim"] = x_lim_list
+
+            # Update "y_lim" parameter
+            # conf_dict["y_lim"] = "lower limit, upper limit"
+            # conf_dict["y_lim"] = ['lower limit', 'upper limit']
+            if conf_dict["y_lim"] != None:
+                y_lim_list = conf_dict["y_lim"].split(",")
+                y_lim_list = [y.replace(" ", "") for y in y_lim_list]
+                conf_dict["y_lim"] = y_lim_list
+
+            sorted_conf_dict = {key: conf_dict[key] for key in keys_list}
+            all_conf_list.append(sorted_conf_dict)
 
         return all_conf_list

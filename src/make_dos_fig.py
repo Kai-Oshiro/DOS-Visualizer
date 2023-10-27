@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import os
+import glob
 import pandas as pd
-from my_module import argument, config, file
+from my_module import argument, config, file, figure
 
 # Get arguments
 args = argument.get_args()
@@ -12,6 +13,8 @@ conf_file = args["f"]
 
 print(f"\n###Config file process###")
 print(f"{conf_file} is referenced as a configuration file.\n")
+
+print("Following parameters were used to create figures.\n")
 
 # Set config file to "configparser"
 conf_proc = config.ConfigProcessor(conf_file)
@@ -25,37 +28,42 @@ for conf_dict in all_conf_list:
         print(f"{k}: {v}")
     print()
 
+print(f"###Figure preparation process###")
+print("Following files were generated.")
+for conf_dict in all_conf_list:
 
     cwd = os.getcwd()
     job_path = conf_dict["job"]
     os.chdir(job_path) # Move to job directory
 
-    pdos_list = []
+    dos_list = []
     for atoms_group, orbitals_group in zip(conf_dict["atoms"], conf_dict["orbitals"]):
 
 
         first_itr = True
         for atoms in atoms_group:
-            #print(atom)
+            read_file = file.ReadFile(atoms=atoms, orbitals_group=orbitals_group)
+
             if first_itr:
-                read_file = file.ReadFile(atoms=atoms_group[0], orbitals_group=orbitals_group)
+                s_atom_ene = read_file.get_ene()
+                atom_ene = s_atom_ene.values
                 len_data = read_file.get_len()
-                s_pdos = pd.Series([0] * len_data) # Define a "pd.Series" with 0 for each value
+                s_group_dos = pd.Series([0] * len_data) # Define a "pd.Series" with 0 for each value
                 first_itr = False
 
-            read_file = file.ReadFile(atoms=atoms, orbitals_group=orbitals_group)
-            df_sum = read_file.get_df()
-            s_pdos += df_sum
+            s_atom_dos = read_file.get_dos()
+            s_group_dos += s_atom_dos
 
-        pdos_list.append(s_pdos)
+        dos_list.append(s_group_dos.values)
 
-    #figure.MakeFig(pdos_)
+    make_fig = figure.MakeFig(dos_list=dos_list, atom_ene=atom_ene, conf_dict=conf_dict)
+    fname = make_fig.plot_pdos()
 
-    print(len(pdos_list))
+    file_path = glob.glob(f"{job_path}/{fname}*")[0]
+    print(f"{file_path}")
 
-    #print()
     os.chdir(cwd)
-
+print()
 
 
 
