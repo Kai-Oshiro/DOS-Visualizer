@@ -1,6 +1,7 @@
 import re
 import sys
 import configparser
+from distutils.util import strtobool
 
 class ConfigProcessor:
     def __init__(self, conf_file=None):
@@ -24,6 +25,12 @@ class ConfigProcessor:
         if len(conf_dict[key].split(",")) != nlen:
             print(f"Length of \"{key}\" isn't {nlen}.")
 
+    def str_to_list(self, conf_dict=None, key=None):
+        if conf_dict[key] != None:
+            _list = conf_dict[key].split(",")
+            _list = [v.replace(" ", "") for v in _list]
+            conf_dict[key] = _list
+
     # Read "JOB_DIR" section
     def read_config(self):
         section_list = self.config_ini.sections()
@@ -36,7 +43,7 @@ class ConfigProcessor:
 
             # List of items that can be set in .ini
             keys_list = ["section", "job", "atoms", "orbitals",
-                        "lablels", "colors", "lines", "figname",
+                        "labels", "colors", "lines", "figname",
                         "fontsize", "dpi", "x_lim", "y_lim", "grid"]
 
             # If key does not exist in .ini, set "None".
@@ -48,6 +55,7 @@ class ConfigProcessor:
             self.check_param(key="atoms", conf_dict=conf_dict)
             self.check_param(key="orbitals", conf_dict=conf_dict)
 
+            self.compare_key_len(key2="labels", conf_dict=conf_dict)
             self.compare_key_len(key2="orbitals", conf_dict=conf_dict)
             self.compare_key_len(key2="colors", conf_dict=conf_dict)
             self.compare_key_len(key2="lines", conf_dict=conf_dict)
@@ -85,37 +93,39 @@ class ConfigProcessor:
                 orbitals_group_list.append(orbitals_list)
             conf_dict["orbitals"] = orbitals_group_list
 
+            # Update "labels" parameter
+            # conf_dict["labels"] = "Ce, O, Fe, H2SO4"
+            # conf_dict["labels"] = ['Ce', 'O', 'Fe', 'H2SO4']
+            self.str_to_list(conf_dict=conf_dict, key="labels")
+
             # Update "colors" parameter
             # conf_dict["colors"] = "darkgray, red, darkorange, limegreen"
             # conf_dict["colors"] = ['darkgray', 'red', 'darkorange', 'limegreen']
-            if conf_dict["colors"] != None:
-                colors_list = conf_dict["colors"].split(",")
-                colors_list = [c.replace(" ", "") for c in colors_list]
-                conf_dict["colors"] = colors_list
+            self.str_to_list(conf_dict=conf_dict, key="colors")
 
             # Update "lines" parameter
             # conf_dict["lines"] = "solid, dashed, dashdot, dotted"
             # conf_dict["lines"] = ['solid', 'dashed', 'dashdot', 'dotted']
-            if conf_dict["lines"] != None:
-                lines_list = conf_dict["lines"].split(",")
-                lines_list = [l.replace(" ", "") for l in lines_list]
-                conf_dict["lines"] = lines_list
+            self.str_to_list(conf_dict=conf_dict, key="lines")
 
             # Update "x_lim" parameter
             # conf_dict["x_lim"] = "lower limit, upper limit"
             # conf_dict["x_lim"] = ['lower limit', 'upper limit']
-            if conf_dict["x_lim"] != None:
-                x_lim_list = conf_dict["x_lim"].split(",")
-                x_lim_list = [x.replace(" ", "") for x in x_lim_list]
-                conf_dict["x_lim"] = x_lim_list
+            self.str_to_list(conf_dict=conf_dict, key="x_lim")
+            if conf_dict["x_lim"] != None: # Convert str to int.
+                conf_dict["x_lim"] = [float(v) for v in conf_dict["x_lim"]]
 
             # Update "y_lim" parameter
             # conf_dict["y_lim"] = "lower limit, upper limit"
             # conf_dict["y_lim"] = ['lower limit', 'upper limit']
-            if conf_dict["y_lim"] != None:
-                y_lim_list = conf_dict["y_lim"].split(",")
-                y_lim_list = [y.replace(" ", "") for y in y_lim_list]
-                conf_dict["y_lim"] = y_lim_list
+            self.str_to_list(conf_dict=conf_dict, key="y_lim")
+            if conf_dict["y_lim"] != None: # Convert str to int.
+                conf_dict["y_lim"] = [float(v) for v in conf_dict["y_lim"]]
+
+            # Convert str to bool
+            if conf_dict["grid"] != None:
+                conf_dict["grid"] = strtobool(conf_dict["grid"]) # Convert str to int.
+                conf_dict["grid"] = bool(conf_dict["grid"]) # Convert int to bool.
 
             sorted_conf_dict = {key: conf_dict[key] for key in keys_list}
             all_conf_list.append(sorted_conf_dict)
