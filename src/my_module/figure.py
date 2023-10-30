@@ -57,6 +57,7 @@ class MakeFig:
             fname = f"{d_today}_{self.section}"
         else:
             fname = self.figname
+
         plt.savefig(fname, dpi=dpi)
 
         return fname
