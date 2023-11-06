@@ -2,26 +2,17 @@ import sys
 
 # Define args
 def get_args():
-    options = {"-f": True} # "True" requires an argument
-    args = {"f": None} # "args" define default value
+    option_dict = {"-f": None} # {option_name: 'default value'}
+    arg_dict = {} # {f: '/path/to/conf/file'}
 
     # Get optional args
-    for key in options.keys():
+    for key in option_dict.keys():
         if key in sys.argv:
             idx = sys.argv.index(key)
-            if options[key]:
-                value = sys.argv[idx+1]
-                if value.startswith("-"):
-                    raise ValueError(f"option {key} must have a value.")
-                args[key[1:]] = value
-                del sys.argv[idx:idx+2]
-            else:
-                args[key[1:]] = True
-                del sys.argv[idx]
-
-    # Get positional args
-    for idx, arg in enumerate(sys.argv):
-        args[idx] = arg
+            value = sys.argv[idx+1] # Get next value of the key (option name)
+            if value.startswith("-"):
+                raise ValueError(f"{key} doesn't have a value.")
+            arg_dict[key[1:]] = value # Remove "-" from option name by key[1:]
 
     # Return args
-    return args
+    return arg_dict

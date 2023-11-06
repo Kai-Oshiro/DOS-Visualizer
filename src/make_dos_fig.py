@@ -5,11 +5,11 @@ import pandas as pd
 from my_module import argument, config, file, figure
 
 # Get arguments
-args = argument.get_args()
-#print(f"args: {args}\n")
+# arg_dict = # {f: '/path/to/conf/file'}
+arg_dict = argument.get_args()
 
 # Get path to a config file
-conf_file = args["f"]
+conf_file = arg_dict["f"]
 
 print(f"\n###Config file process###")
 print(f"{conf_file} is referenced as a configuration file.\n")
