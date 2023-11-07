@@ -7,56 +7,68 @@ class MakeFig:
     def __init__(self, dos_list=None, atom_ene=None, conf_dict=None):
         self.dos_list = dos_list
         self.atom_ene = atom_ene
-        self.section = conf_dict["section"]
-        self.labels_list = conf_dict["labels"]
-        self.colors_list = conf_dict["colors"]
-        self.lines_list = conf_dict["lines"]
-        self.figname = conf_dict["figname"]
-        self.fontsize = conf_dict["fontsize"]
-        self.dpi = conf_dict["dpi"]
-        self.x_lim = conf_dict["x_lim"]
-        self.y_lim = conf_dict["y_lim"]
-        self.grid = conf_dict["grid"]
+        self.conf_dict = conf_dict
 
     def plot_pdos(self):
-        if self.dpi != None: dpi = float(self.dpi)
-        else: dpi = None
+        # self.conf_dict["dpi"]: str or None
+        if self.conf_dict["dpi"] != None:
+            dpi = float(self.conf_dict["dpi"])
+        else:
+            dpi = None
         plt.figure(dpi=dpi)
 
         for idx, group_dos in enumerate(self.dos_list):
-            if self.labels_list == None: label = f"grop_{idx+1}"
-            else: label = self.labels_list[idx]
+            # self.conf_dict["labels"]: list or None
+            if self.conf_dict["labels"] == None:
+                label = f"grop_{idx+1}"
+            else:
+                label = self.conf_dict["labels"][idx]
 
-            if self.colors_list == None: color = None
-            else: color = self.colors_list[idx]
+            # self.conf_dict["colors"]: list or None
+            if self.conf_dict["colors"] == None:
+                color = None
+            else:
+                color = self.conf_dict["colors"][idx]
 
-            if self.lines_list == None: linestyle = None
-            else: linestyle = self.lines_list[idx]
+            # self.conf_dict["lines"]: list or None
+            if self.conf_dict["lines"] == None:
+                linestyle = None
+            else:
+                linestyle = self.conf_dict["lines"][idx]
 
             plt.plot(self.atom_ene, group_dos, label=label, color=color, linestyle=linestyle)
 
-        if self.fontsize == None: fontsize = None
-        else: fontsize = self.fontsize
+        # self.conf_dict["fontsize"]: str or None
+        if self.conf_dict["fontsize"] == None:
+            fontsize = None
+        else:
+            fontsize = self.conf_dict["fontsize"]
+            fontsize = float(fontsize)
 
         plt.xlabel(r"$\it{E} - \it{E}_{\rm{f}}$ / eV", fontsize=fontsize)
         plt.ylabel("PDOS", fontsize=fontsize)
         plt.tick_params(labelsize=fontsize)
         plt.legend(fontsize=fontsize)
 
-        if self.x_lim != None:
-            plt.xlim(self.x_lim[0], self.x_lim[1])
-        if self.y_lim != None:
-            plt.ylim(self.y_lim[0], self.y_lim[1])
-        if self.grid:
+        # self.conf_dict["x_lim"]: list or None
+        if self.conf_dict["x_lim"] != None:
+            plt.xlim(self.conf_dict["x_lim"][0], self.conf_dict["x_lim"][1])
+        # self.conf_dict["y_lim"]: list or None
+        if self.conf_dict["y_lim"] != None:
+            plt.ylim(self.conf_dict["y_lim"][0], self.conf_dict["y_lim"][1])
+        # self.conf_dict["grid"]: bool or None
+        if self.conf_dict["grid"]:
             plt.grid()
 
         d_today = str(datetime.date.today())
         d_today = d_today.replace("-","")
 
-        if self.figname == None:
-            fname = f"{d_today}_{self.section}"
+        # self.conf_dict["figname"]: str or None
+        if self.conf_dict["figname"] == None:
+            section_name = self.conf_dict["section"] # self.conf_dict["section"]: str
+            fname = f"{d_today}_{section_name}"
         else:
-            fname = self.figname
+            fname = self.conf_dict["figname"]
 
         plt.savefig(fname, dpi=dpi)
 

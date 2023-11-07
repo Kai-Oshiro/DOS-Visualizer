@@ -94,8 +94,8 @@ class ConfigProcessor:
             self.conf_dict["orbitals"] = orbitals_group_list
 
             # Update "labels" parameter
-            # self.conf_dict["labels"] = "Ce, O, Fe, H2SO4"
-            # self.conf_dict["labels"] = ['Ce', 'O', 'Fe', 'H2SO4']
+            # self.conf_dict["labels"] = "Ce, O, H2SO4"
+            # self.conf_dict["labels"] = ['Ce', 'O', 'H2SO4']
             self.str_to_list(key="labels")
 
             # Update "colors" parameter
