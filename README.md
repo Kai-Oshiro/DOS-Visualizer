@@ -29,7 +29,7 @@ For example,
 cd DOS-Visualizer/test/CeO2_H2SO4_DOS/
 mkdir dos_dat
 cp INCAR POSCAR DOSCAR dos_dat/
-cd dos_dat
+cd dos_dat/
 ```
 Here, INCAR, POSCAR and DOSCAR files are required by VASPKIT to generate DAT files of PDOS.  
 Run VASPKIT in "dos_dat".  
@@ -56,7 +56,7 @@ test/
         └ PDOS_A*_UP/DW.dat
 ```
 Next, create an INI file in "test" directory (any place is fine).  
-The INI file must contain at least the following settings.  
+The INI file must contain at least following settings.  
 ```
 [Section_name]
 job = /path/to/your/dos/calculation
@@ -71,7 +71,7 @@ atoms = 145-148, 149, 150 151
 orbitals = tot, tot, tot
 ```
 See /DOS-Visualizer/test/sample.ini for more details.  
-And finally, execute this program to generate figures.  
+And finally, execute this code to generate figures.  
 ```
 /path/to/make_dos_fig.py -f /path/to/ini/file
 ```
@@ -82,10 +82,10 @@ If you are in "test" directory,
 After that, figures of PDOS are generated in the directories of DOS calculation.  
 For example,  
 
-Ce_orbitals_pdos.png  
+./CeO2_H2SO4_DOS/Ce_orbitals_pdos.png  
 <img width="500" src="test/CeO2_H2SO4_DOS/Ce_orbitals_pdos.png">
 
-O_atoms_pdos.png  
+./CeO2_H2SO4_DOS/O_atoms_pdos.png  
 <img width="500" src="test/CeO2_H2SO4_DOS/O_atoms_pdos.png">
 
 ### References of DOS calculation
