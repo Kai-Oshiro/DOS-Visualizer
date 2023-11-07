@@ -77,7 +77,7 @@ And finally, execute this program to generate figures.
 ```
 If you are in "test" directory,
 ```
-../src/make_dos_fig.py -f dos_fig.ini
+../src/make_dos_fig.py -f sample.ini
 ```
 After that, figures of PDOS are generated in the directories of DOS calculation.  
 
