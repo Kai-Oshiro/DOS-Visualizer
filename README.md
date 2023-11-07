@@ -81,6 +81,12 @@ If you are in "test" directory,
 ```
 After that, figures of PDOS are generated in the directories of DOS calculation.  
 
+Ce_orbitals_pdos.png  
+<img width="50" src="test/CeO2_H2SO4_DOS/Ce_orbitals_pdos.png">
+
+O_atoms_pdos.png  
+<img width="50" src="test/CeO2_H2SO4_DOS/O_atoms_pdos.png">
+
 ### References of DOS calculation
 1. https://www.vasp.at/tutorials/latest/bulk/part1/#bulk-e02
 2. https://vaspkit.com/tutorials.html#extract-and-output-dos-and-pdos
