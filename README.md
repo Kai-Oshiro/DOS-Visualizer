@@ -70,7 +70,7 @@ job = CeO2_H2SO4_DOS
 atoms = 145-148, 149, 150 151
 orbitals = tot, tot, tot
 ```
-See /DOS-Visualizer/test/dos_fig.ini for more details.  
+See /DOS-Visualizer/test/sample.ini for more details.  
 And finally, execute this program to generate figures.  
 ```
 /path/to/make_dos_fig.py -f /path/to/ini/file
@@ -80,6 +80,7 @@ If you are in "test" directory,
 ../src/make_dos_fig.py -f sample.ini
 ```
 After that, figures of PDOS are generated in the directories of DOS calculation.  
+For example,  
 
 Ce_orbitals_pdos.png  
 <img width="500" src="test/CeO2_H2SO4_DOS/Ce_orbitals_pdos.png">
