@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import glob
+import time
 import pandas as pd
 from my_module import argument, config, file, figure
 
@@ -59,7 +60,8 @@ for conf_dict in all_conf_list:
     make_fig = figure.MakeFig(dos_list=dos_list, atom_ene=atom_ene, conf_dict=conf_dict)
     fname = make_fig.plot_pdos()
 
-    file_path = glob.glob(f"{job_path}/{fname}*")[0]
+    full_job_path = os.getcwd()
+    file_path = glob.glob(f"{full_job_path}/{fname}*")[0]
     print(f"{file_path}")
 
     os.chdir(cwd)
