@@ -36,7 +36,7 @@ Run VASPKIT in "dos_dat".
 ```
 vaspkit
 11
-112 or 113
+112
 ```
 Now, you have following files.  
 This code only use PDOS_A*_UP/DW.dat.  
